@@ -72,11 +72,14 @@ public class ChesslibPgnParser implements PgnParser {
     }
 
     private ParsedGame toDto(Game game) {
+        int whiteElo = game.getWhitePlayer().getElo();
+        int blackElo = game.getBlackPlayer().getElo();
+
         return new ParsedGame(
             game.getWhitePlayer().getName(),
             game.getBlackPlayer().getName(),
-            game.getWhitePlayer().getElo(),
-            game.getBlackPlayer().getElo(),
+            whiteElo == 0 ? null : whiteElo,
+            blackElo == 0 ? null : blackElo,
             game.getRound().getEvent().getTimeControl().getMilliseconds(),
             mapGameResult(game.getResult()),
             mapMoves(game.getHalfMoves())
@@ -95,7 +98,7 @@ public class ChesslibPgnParser implements PgnParser {
         }
 
         int whiteElo = game.getWhitePlayer().getElo();
-        if (whiteElo < 100) {
+        if (whiteElo != 0 && whiteElo < 100) {
             throw new InvalidPgnException("White player's elo is below a 100");
         }
 
@@ -104,7 +107,7 @@ public class ChesslibPgnParser implements PgnParser {
         }
 
         int blackElo = game.getBlackPlayer().getElo();
-        if (blackElo < 100) {
+        if (blackElo != 0 && blackElo < 100) {
             throw new InvalidPgnException("Black player's elo is below a 100");
         }
 
